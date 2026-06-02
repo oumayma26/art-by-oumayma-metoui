@@ -55,7 +55,7 @@ function About() {
               <div className="relative">
                 <div className="w-80 h-80 rounded-full border-4 border-gold overflow-hidden shadow-pink-lg">
                   <img
-                    src="/public/img/me.png"
+                    src="/img/me.png"
                     alt="Oumayma"
                     className="w-full h-full object-cover"
                   />
