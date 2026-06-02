@@ -1,0 +1,58 @@
+/* App specific styles */
+.page-transition-enter {
+  animation: slideInRight 0.5s ease-out;
+}
+
+.page-transition-exit {
+  animation: slideOutLeft 0.5s ease-in;
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideOutLeft {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-30px);
+  }
+}
+
+/* Dark mode (Atelier mode) styles */
+:root[data-theme='dark'] {
+  --color-rose-pale: #4A0E4E;
+  --color-rose-misty: #6B1B6F;
+  --color-rose-snow: #3A0A3E;
+  --color-text-primary: #F5E6F0;
+  --color-text-secondary: #D4B8D9;
+}
+
+/* Smooth transition for theme changes */
+* {
+  transition: background-color 0.5s ease, color 0.5s ease, border-color 0.5s ease;
+}
+
+/* Floating animation for petals */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
+}
+
+.float {
+  animation: float 6s ease-in-out infinite;
+}

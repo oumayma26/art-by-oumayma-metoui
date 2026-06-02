@@ -1,0 +1,112 @@
+{
+  "common": {
+    "atelier": "Mon Petit Atelier",
+    "title": "Oumayma's Art Gallery",
+    "subtitle": "Peintures & Créations",
+    "description": "Découvrez une collection de peintures originales, du rêve à la réalité, où chaque coup de pinceau raconte une histoire."
+  },
+  "navigation": {
+    "home": "Accueil",
+    "gallery": "Galerie",
+    "about": "À Propos",
+    "contact": "Contact"
+  },
+  "buttons": {
+    "discover": "Découvrir",
+    "learnMore": "En savoir plus",
+    "send": "Envoyer",
+    "close": "Fermer",
+    "back": "Retour"
+  },
+  "hero": {
+    "cta1": "Découvrir",
+    "cta2": "En savoir plus"
+  },
+  "gallery": {
+    "title": "Ma Collection",
+    "painting": "tableau",
+    "paintings": "tableaux",
+    "selected": "sélectionné",
+    "selectedPlural": "sélectionnés",
+    "searchPlaceholder": "Rechercher une peinture..."
+  },
+  "filterBar": {
+    "all": "Tous",
+    "oil": "Huile",
+    "acrylic": "Acrylique",
+    "watercolor": "Aquarelle",
+    "mixedMedia": "Mixed Media"
+  },
+  "about": {
+    "title": "À Propos de Moi",
+    "welcome": "Bienvenue dans mon univers",
+    "description1": "Je suis Oumayma, développeuse et artiste passionnée. Mon parcours a toujours été partagé entre deux mondes : le code et la peinture. Ces deux disciplines m'ont appris la même chose : la créativité n'a pas de limites.",
+    "description2": "Depuis mon plus jeune âge, je peins pour exprimer ce qui ne peut pas être dit avec des mots. Chaque toile est une conversation entre mon âme et le vide blanc, remplie d'émotions, de couleurs et de rêves.",
+    "description3": "Cette galerie est le reflet de mon évolution artistique, où la science rencontre l'art, où la logique danse avec l'émotion.",
+    "motto": "La créativité n'a pas de limites",
+    "stats": {
+      "paintings": "Tableaux Créés",
+      "experience": "Années d'Expérience",
+      "exhibitions": "Expositions",
+      "collectors": "Collecteurs"
+    },
+    "journey": "Mon Parcours",
+    "timeline": {
+      "year1": "2016",
+      "title1": "Débuts artistiques",
+      "desc1": "J'ai commencé à peindre sérieusement et à développer mon propre style.",
+      "year2": "2018",
+      "title2": "Première exposition",
+      "desc2": "Présentation de mes œuvres dans une petite galerie locale."
+    }
+  },
+  "contact": {
+    "title": "Contactez-moi",
+    "description": "Vous êtes intéressé par une peinture ? Vous avez une question ? N'hésitez pas à m'écrire !",
+    "form": {
+      "name": "Nom",
+      "namePlaceholder": "Votre nom",
+      "email": "Email",
+      "emailPlaceholder": "votre.email@exemple.com",
+      "subject": "Sujet",
+      "subjectPlaceholder": "Quel est le sujet ?",
+      "message": "Message",
+      "messagePlaceholder": "Votre message...",
+      "selectPaintings": "Sélectionnez les peintures qui vous intéressent (optionnel)",
+      "send": "Envoyer",
+      "sending": "Envoi en cours...",
+      "success": "Message envoyé avec succès ! 🎉",
+      "error": "Une erreur s'est produite. Veuillez réessayer.",
+      "required": "Ce champ est requis"
+    },
+    "info": {
+      "email": "E-mail",
+      "phone": "Téléphone",
+      "location": "Localisation"
+    }
+  },
+  "footer": {
+    "about": "Oumayma's Gallery",
+    "description": "Peintures, créations & explorations artistiques. Développeuse & Artiste.",
+    "links": "Navigation",
+    "portfolio": "Portfolio Code",
+    "social": "Réseaux Sociaux",
+    "rights": "Tous droits réservés",
+    "follow": "Suivez-moi",
+    "year": "© {{year}} Oumayma Metoui. Tous droits réservés."
+  },
+  "language": "Langue",
+  "mood": {
+    "joyful": "Joyeux",
+    "calm": "Calme",
+    "dramatic": "Dramatique"
+  },
+  "painting": {
+    "dimensions": "Dimensions",
+    "technique": "Technique",
+    "price": "Prix",
+    "available": "Disponible",
+    "notAvailable": "Non disponible",
+    "details": "Détails"
+  }
+}

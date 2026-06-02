@@ -1,0 +1,88 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-rose-pale text-text-primary font-body;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display;
+  }
+
+  a {
+    @apply transition-all duration-300;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply px-6 py-3 rounded-2xl bg-rose-dark text-white font-medium hover:bg-rose-medium transition-all duration-300 shadow-pink hover:shadow-pink-lg;
+  }
+
+  .btn-secondary {
+    @apply px-6 py-3 rounded-2xl bg-rose-pale text-rose-dark font-medium hover:bg-rose-misty transition-all duration-300 border border-rose-dark;
+  }
+
+  .btn-ghost {
+    @apply px-4 py-2 rounded-full text-rose-dark font-medium hover:bg-rose-pale transition-all duration-300;
+  }
+
+  .card-art {
+    @apply bg-white rounded-3xl overflow-hidden shadow-pink hover:shadow-pink-lg transition-all duration-300 border border-rose-misty;
+  }
+
+  .badge-available {
+    @apply inline-block px-4 py-2 rounded-full text-xs font-semibold bg-rose-pale text-rose-dark;
+  }
+
+  .badge-sold {
+    @apply inline-block px-4 py-2 rounded-full text-xs font-semibold bg-gray-200 text-gray-700;
+  }
+
+  .input-rose {
+    @apply w-full px-4 py-3 rounded-2xl border border-rose-dark bg-white text-text-primary placeholder-text-secondary focus:outline-none focus:ring-2 focus:ring-rose-dark focus:border-transparent transition-all;
+  }
+
+  .text-accent {
+    @apply text-rose-dark font-semibold;
+  }
+
+  .gradient-rose {
+    @apply bg-gradient-to-br from-rose-pale via-rose-misty to-rose-snow;
+  }
+}
+
+/* Smooth scroll */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #FFE4E1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #DB7093;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #C71585;
+}
+
+/* Image loading */
+img {
+  @apply transition-all duration-300;
+}
+
+/* Selection color */
+::selection {
+  @apply bg-rose-dark text-white;
+}
