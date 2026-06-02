@@ -31,7 +31,7 @@ function Hero() {
       <div
         className="absolute inset-0 opacity-40"
         style={{
-          backgroundImage: 'url(/public/img/univers.jpg)',
+          backgroundImage: 'url(/img/univers.jpg)',
           backgroundSize: 'cover',
           backgroundPosition: 'center',
           backgroundAttachment: 'fixed'
