@@ -1,42 +1,58 @@
-import { useState, useMemo } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { FiRefreshCcw, FiSearch } from 'react-icons/fi'
+
 import { motion } from 'framer-motion'
-import { FiSearch } from 'react-icons/fi'
+import { useSearchParams } from 'react-router-dom'
 import { paintings } from '../data/paintings'
-import PaintingCard from './PaintingCard'
 import FilterBar from './FilterBar'
+import PaintingCard from './PaintingCard'
+
+function useDebounce(value, delay) {
+  const [debounced, setDebounced] = useState(value)
+  useEffect(() => {
+    const timer = setTimeout(() => setDebounced(value), delay)
+    return () => clearTimeout(timer)
+  }, [value, delay])
+  return debounced
+}
 
 function Gallery() {
-  const [selectedTechnique, setSelectedTechnique] = useState('all')
-  const [searchTerm, setSearchTerm] = useState('')
+  const [searchParams, setSearchParams] = useSearchParams()
+  const [selectedTechnique, setSelectedTechnique] = useState(searchParams.get('technique') || 'all')
+  const [searchTerm, setSearchTerm] = useState(searchParams.get('q') || '')
+  const debouncedSearch = useDebounce(searchTerm, 300)
 
-  // Filter and search paintings
+  // Sync URL avec les filtres
+  useEffect(() => {
+    const params = new URLSearchParams()
+    if (selectedTechnique !== 'all') params.set('technique', selectedTechnique)
+    if (debouncedSearch) params.set('q', debouncedSearch)
+    setSearchParams(params, { replace: true })
+  }, [selectedTechnique, debouncedSearch, setSearchParams])
+
   const filteredPaintings = useMemo(() => {
     return paintings.filter(painting => {
       const matchesTechnique = selectedTechnique === 'all' || painting.technique === selectedTechnique
-      const matchesSearch = painting.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                           painting.description.toLowerCase().includes(searchTerm.toLowerCase())
+      const matchesSearch = debouncedSearch === '' ||
+        painting.title.toLowerCase().includes(debouncedSearch.toLowerCase()) ||
+        painting.description.toLowerCase().includes(debouncedSearch.toLowerCase())
       return matchesTechnique && matchesSearch
     })
-  }, [selectedTechnique, searchTerm])
+  }, [selectedTechnique, debouncedSearch])
+
+  const resetFilters = useCallback(() => {
+    setSelectedTechnique('all')
+    setSearchTerm('')
+  }, [])
 
   const containerVariants = {
     hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1,
-        delayChildren: 0.2
-      }
-    }
+    visible: { opacity: 1, transition: { staggerChildren: 0.1, delayChildren: 0.2 } }
   }
 
   const itemVariants = {
     hidden: { opacity: 0, y: 20 },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: { duration: 0.5 }
-    }
+    visible: { opacity: 1, y: 0, transition: { duration: 0.5 } }
   }
 
   return (
@@ -68,11 +84,19 @@ function Gallery() {
             <FiSearch className="absolute left-4 top-1/2 transform -translate-y-1/2 text-rose-dark text-xl" />
             <input
               type="text"
-              placeholder="Rechercher par titre..."
+              placeholder="Rechercher par titre ou description..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="input-rose pl-12"
+              className="input-rose pl-12 pr-10"
             />
+            {searchTerm && (
+              <button
+                onClick={() => setSearchTerm('')}
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-rose-dark/50 hover:text-rose-dark"
+              >
+                ✕
+              </button>
+            )}
           </div>
         </motion.div>
 
@@ -82,21 +106,20 @@ function Gallery() {
           onFilterChange={setSelectedTechnique}
         />
 
-        {/* No Results */}
+        {/* No Results - Empty State */}
         {filteredPaintings.length === 0 ? (
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="text-center py-12"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="text-center py-16"
           >
-            <p className="text-2xl text-text-secondary mb-4">Aucun tableau trouvé</p>
-            <button
-              onClick={() => {
-                setSelectedTechnique('all')
-                setSearchTerm('')
-              }}
-              className="btn-primary"
-            >
+            <div className="text-6xl mb-4">🎨</div>
+            <p className="text-2xl text-text-secondary mb-2 font-display">Aucun tableau trouvé</p>
+            <p className="text-text-secondary mb-6">
+              Essayez d'autres critères de recherche ou réinitialisez les filtres.
+            </p>
+            <button onClick={resetFilters} className="btn-primary inline-flex items-center gap-2">
+              <FiRefreshCcw />
               Réinitialiser les filtres
             </button>
           </motion.div>

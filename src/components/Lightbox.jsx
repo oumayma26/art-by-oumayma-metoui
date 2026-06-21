@@ -1,171 +1,128 @@
-import { motion, AnimatePresence } from 'framer-motion'
-import { FiX, FiChevronLeft, FiChevronRight } from 'react-icons/fi'
-import { techniques } from '../data/paintings'
+import { AnimatePresence, motion } from 'framer-motion'
+import { useCallback, useEffect, useState } from 'react'
+import { FiChevronLeft, FiChevronRight, FiX } from 'react-icons/fi'
+
+import { paintings } from '../data/paintings'
 
 function Lightbox({ painting, onClose, onPrevious, onNext, hasPrevious, hasNext }) {
+  const [direction, setDirection] = useState(0)
+
+  // ── Navigation clavier ──
+  const handleKeyDown = useCallback((e) => {
+    if (e.key === 'Escape') onClose()
+    if (e.key === 'ArrowLeft' && hasPrevious) {
+      setDirection(-1)
+      onPrevious()
+    }
+    if (e.key === 'ArrowRight' && hasNext) {
+      setDirection(1)
+      onNext()
+    }
+  }, [onClose, onPrevious, onNext, hasPrevious, hasNext])
+
+  useEffect(() => {
+    if (!painting) return
+    document.addEventListener('keydown', handleKeyDown)
+    document.body.style.overflow = 'hidden'
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown)
+      document.body.style.overflow = 'unset'
+    }
+  }, [painting, handleKeyDown])
+
+  // ── Swipe mobile ──
+  const [touchStart, setTouchStart] = useState(null)
+  const minSwipeDistance = 50
+
+  const onTouchStart = (e) => setTouchStart(e.targetTouches[0].clientX)
+  const onTouchEnd = (e) => {
+    if (!touchStart) return
+    const distance = touchStart - e.changedTouches[0].clientX
+    if (distance > minSwipeDistance && hasNext) { setDirection(1); onNext() }
+    if (distance < -minSwipeDistance && hasPrevious) { setDirection(-1); onPrevious() }
+    setTouchStart(null)
+  }
+
   if (!painting) return null
 
-  const backdropVariants = {
-    hidden: { opacity: 0 },
-    visible: { opacity: 1 }
-  }
-
-  const contentVariants = {
-    hidden: { opacity: 0, scale: 0.95 },
-    visible: {
-      opacity: 1,
-      scale: 1,
-      transition: {
-        type: 'spring',
-        stiffness: 300,
-        damping: 30
-      }
-    },
-    exit: { opacity: 0, scale: 0.95 }
-  }
+  const currentIndex = paintings.findIndex(p => p.id === painting.id)
 
   return (
     <AnimatePresence>
       <motion.div
-        variants={backdropVariants}
-        initial="hidden"
-        animate="visible"
-        exit="hidden"
-        onClick={onClose}
-        className="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+        key="lightbox-backdrop"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.2 }}
+        className="fixed inset-0 bg-black/90 backdrop-blur-md z-50 flex items-center justify-center"
+        onClick={(e) => e.target === e.currentTarget && onClose()}
+        onTouchStart={onTouchStart}
+        onTouchEnd={onTouchEnd}
       >
-        <motion.div
-          variants={contentVariants}
-          onClick={(e) => e.stopPropagation()}
-          className="w-full max-w-4xl max-h-[90vh] bg-gradient-to-b from-rose-snow to-rose-pale rounded-3xl overflow-auto shadow-pink-lg"
+        {/* Compteur */}
+        <div className="absolute top-6 left-1/2 -translate-x-1/2 z-20 bg-black/50 text-white px-4 py-1 rounded-full text-sm font-medium backdrop-blur-sm">
+          {currentIndex + 1} / {paintings.length}
+        </div>
+
+        {/* Close Button */}
+        <motion.button
+          whileHover={{ scale: 1.1 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={onClose}
+          className="absolute top-6 right-6 z-20 w-12 h-12 bg-white/10 hover:bg-white/20 text-white rounded-full flex items-center justify-center transition-colors backdrop-blur-sm"
         >
-          {/* Close Button */}
+          <FiX size={24} />
+        </motion.button>
+
+        {/* Previous Button */}
+        {hasPrevious && (
           <motion.button
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.95 }}
-            onClick={onClose}
-            className="absolute top-4 right-4 z-10 w-10 h-10 bg-rose-dark text-white rounded-full flex items-center justify-center hover:bg-rose-medium transition-colors shadow-lg"
+            onClick={() => { setDirection(-1); onPrevious() }}
+            className="absolute left-4 md:left-8 top-1/2 -translate-y-1/2 z-20 w-12 h-12 bg-white/10 hover:bg-white/20 text-white rounded-full flex items-center justify-center transition-colors backdrop-blur-sm"
           >
-            <FiX size={24} />
+            <FiChevronLeft size={24} />
           </motion.button>
+        )}
 
-          <div className="flex flex-col lg:flex-row gap-6 p-8">
-            {/* Image */}
-            <div className="flex-1 flex items-center justify-center">
-              <motion.img
-                src={painting.image}
-                alt={painting.title}
-                className="w-full h-auto rounded-2xl shadow-pink"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.3 }}
-              />
-            </div>
+        {/* Next Button */}
+        {hasNext && (
+          <motion.button
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => { setDirection(1); onNext() }}
+            className="absolute right-4 md:right-8 top-1/2 -translate-y-1/2 z-20 w-12 h-12 bg-white/10 hover:bg-white/20 text-white rounded-full flex items-center justify-center transition-colors backdrop-blur-sm"
+          >
+            <FiChevronRight size={24} />
+          </motion.button>
+        )}
 
-            {/* Info */}
-            <div className="flex-1 flex flex-col justify-between">
-              {/* Content */}
-              <div>
-                <motion.h2
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.1 }}
-                  className="text-3xl md:text-4xl font-bold font-display text-rose-dark mb-4"
-                >
-                  {painting.title}
-                </motion.h2>
-
-                <motion.p
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.2 }}
-                  className="text-text-secondary text-lg mb-6 leading-relaxed"
-                >
-                  {painting.description}
-                </motion.p>
-
-                {/* Details Grid */}
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.3 }}
-                  className="grid grid-cols-2 gap-4 mb-8 p-4 bg-white rounded-2xl border border-rose-misty"
-                >
-                  <div>
-                    <p className="text-xs text-text-secondary uppercase tracking-wide mb-1">
-                      Technique
-                    </p>
-                    <p className="text-lg font-semibold text-rose-dark">
-                      {techniques[painting.technique]}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-text-secondary uppercase tracking-wide mb-1">
-                      Année
-                    </p>
-                    <p className="text-lg font-semibold text-rose-dark">
-                      {painting.year}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-text-secondary uppercase tracking-wide mb-1">
-                      Dimensions
-                    </p>
-                    <p className="text-lg font-semibold text-rose-dark">
-                      {painting.dimensions}
-                    </p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-text-secondary uppercase tracking-wide mb-1">
-                      Prix
-                    </p>
-                    <p className="text-lg font-semibold text-gold">
-                      {painting.price}€
-                    </p>
-                  </div>
-                </motion.div>
-
-                {/* Status */}
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ delay: 0.4 }}
-                  className="mb-6"
-                >
-                  {painting.disponible ? (
-                    <span className="badge-available text-base">✓ Disponible</span>
-                  ) : (
-                    <span className="badge-sold text-base">Vendu</span>
-                  )}
-                </motion.div>
-              </div>
-
-              {/* Navigation Buttons */}
-              <div className="flex gap-3">
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={onPrevious}
-                  disabled={!hasPrevious}
-                  className="flex items-center gap-2 btn-secondary disabled:opacity-50 disabled:cursor-not-allowed flex-1"
-                >
-                  <FiChevronLeft size={20} />
-                  Précédent
-                </motion.button>
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={onNext}
-                  disabled={!hasNext}
-                  className="flex items-center gap-2 btn-secondary disabled:opacity-50 disabled:cursor-not-allowed flex-1"
-                >
-                  Suivant
-                  <FiChevronRight size={20} />
-                </motion.button>
-              </div>
-            </div>
-          </div>
+        {/* Image seule */}
+        <motion.div
+          key={painting.id}
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.9 }}
+          transition={{ duration: 0.3 }}
+          className="max-w-[90vw] max-h-[85vh] flex items-center justify-center p-4"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <img
+            src={painting.image}
+            alt={painting.title}
+            className="max-w-full max-h-[85vh] w-auto h-auto object-contain rounded-lg shadow-2xl"
+            draggable={false}
+          />
         </motion.div>
+
+        {/* Titre en bas */}
+        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 text-center">
+          <p className="text-white/90 text-lg font-medium drop-shadow-lg">
+            {painting.title}
+          </p>
+        </div>
       </motion.div>
     </AnimatePresence>
   )
